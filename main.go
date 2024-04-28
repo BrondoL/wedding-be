@@ -10,8 +10,10 @@ import (
 	"github.com/BrondoL/wedding-be/internal/router"
 	"github.com/BrondoL/wedding-be/internal/service"
 	"github.com/BrondoL/wedding-be/pkg/cache"
+	"github.com/BrondoL/wedding-be/pkg/logger"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -20,6 +22,10 @@ func main() {
 
 	redisCache := cache.NewRedisCache(cfg)
 	db := config.GetConn(cfg)
+	loggerInstance := logrus.New()
+	loggerInstance.SetLevel(logrus.DebugLevel)
+	loggerInstance.SetFormatter(&logrus.JSONFormatter{})
+	log := logger.NewLogger(loggerInstance)
 
 	attendanceRepository := r.NewAttendanceRepository(&r.ARConfig{DB: db})
 
@@ -32,6 +38,7 @@ func main() {
 	handler := handler.NewHandler(&handler.HandlerConfig{
 		Cfg:               cfg,
 		AttendanceService: attendanceService,
+		Logger:            log,
 	})
 
 	if cfg.APP_ENV == constant.EnvironmentProduction {

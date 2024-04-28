@@ -14,7 +14,7 @@ func (h *Handler) GetAttendances(c *gin.Context) {
 	ctx := c.Request.Context()
 	attendances, err := h.attendanceService.GetAttendances(ctx)
 	if err != nil {
-		httpres := util.ResponseError(err)
+		httpres := util.ResponseError(c, err, h.logger)
 		c.JSON(httpres.Code, httpres)
 		return
 	}
@@ -23,7 +23,7 @@ func (h *Handler) GetAttendances(c *gin.Context) {
 
 	res.FormatAttendanceResponse(attendances)
 
-	httpres := util.ResponseSuccess(res, "get attendances success")
+	httpres := util.ResponseSuccess(c, h.logger, res, "get attendances success")
 	c.JSON(httpres.Code, httpres)
 }
 
@@ -36,7 +36,7 @@ func (h *Handler) CreateAttendance(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		validation := validator.FormatValidation(err)
-		httpres := util.ResponseError(util.NewUnprocessibleEntityError(validation))
+		httpres := util.ResponseError(c, util.NewUnprocessibleEntityError(validation), h.logger)
 		c.JSON(httpres.Code, httpres)
 		return
 	}
@@ -44,13 +44,13 @@ func (h *Handler) CreateAttendance(c *gin.Context) {
 	m := req.ConvertToModel()
 	attendance, err := h.attendanceService.CreateAttendance(ctx, m)
 	if err != nil {
-		httpres := util.ResponseError(err)
+		httpres := util.ResponseError(c, err, h.logger)
 		c.JSON(httpres.Code, httpres)
 		return
 	}
 
 	res.FormatAttendance(attendance)
 
-	httpres := util.ResponseSuccess(res, "create attendance success", http.StatusCreated)
+	httpres := util.ResponseSuccess(c, h.logger, res, "create attendance success", http.StatusCreated)
 	c.JSON(httpres.Code, httpres)
 }

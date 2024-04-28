@@ -6,6 +6,6 @@ import (
 )
 
 func (h *Handler) DefaultHandler(c *gin.Context) {
-	httpres := util.ResponseSuccess(nil, "Welcome to Levri & Nabil Wedding API")
+	httpres := util.ResponseSuccess(c, h.logger, nil, "Welcome to Levri & Nabil Wedding API")
 	c.JSON(httpres.Code, httpres)
 }

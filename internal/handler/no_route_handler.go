@@ -6,6 +6,6 @@ import (
 )
 
 func (h *Handler) NoRoute(c *gin.Context) {
-	httpres := util.ResponseError(util.NewNotFoundError("page not found"))
+	httpres := util.ResponseError(c, util.NewNotFoundError("page not found"), h.logger)
 	c.JSON(httpres.Code, httpres)
 }
