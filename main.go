@@ -49,7 +49,7 @@ func main() {
 
 	// // handle CORS
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{cfg.CLIENT_URL}
+	config.AllowOrigins = []string{cfg.CLIENT_URL, "http://localhost:8000"}
 	config.AllowHeaders = []string{"Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization", "X-Max"}
 	config.AllowCredentials = true
 	r.Use(cors.New(config))
