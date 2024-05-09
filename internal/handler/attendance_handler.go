@@ -19,9 +19,7 @@ func (h *Handler) GetAttendances(c *gin.Context) {
 		return
 	}
 
-	var res response.AttendancesResponse
-
-	res.FormatAttendanceResponse(attendances)
+	res := response.FormatAttendanceResponse(attendances)
 
 	httpres := util.ResponseSuccess(c, h.logger, res, "get attendances success")
 	c.JSON(httpres.Code, httpres)
@@ -31,7 +29,6 @@ func (h *Handler) CreateAttendance(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	var req request.AttendanceRequest
-	var res response.AttendanceResponse
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
@@ -49,7 +46,7 @@ func (h *Handler) CreateAttendance(c *gin.Context) {
 		return
 	}
 
-	res.FormatAttendance(attendance)
+	res := response.FormatAttendance(attendance)
 
 	httpres := util.ResponseSuccess(c, h.logger, res, "create attendance success", http.StatusCreated)
 	c.JSON(httpres.Code, httpres)

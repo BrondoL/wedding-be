@@ -25,14 +25,17 @@ type Summary struct {
 	Ragu       int `json:"ragu"`
 }
 
-func (r *AttendancesResponse) FormatAttendanceResponse(attendances []*model.Attendance) {
+func FormatAttendanceResponse(attendances []*model.Attendance) AttendancesResponse {
 	total, hadir, tidakHadir, ragu := 0, 0, 0, 0
 
 	formattedAttendances := []AttendanceResponse{}
+
 	for _, attendance := range attendances {
 		if attendance.Status == constant.StatusHadir {
-			hadir += *attendance.Number
-			total += *attendance.Number
+			if attendance.Number == nil {
+				hadir += *attendance.Number
+				total += *attendance.Number
+			}
 		} else if attendance.Status == constant.StatusTidakHadir {
 			tidakHadir += 1
 			total += 1
@@ -41,27 +44,29 @@ func (r *AttendancesResponse) FormatAttendanceResponse(attendances []*model.Atte
 			total += 1
 		}
 
-		formattedAttendance := AttendanceResponse{
-			Name:        attendance.Name,
-			Description: attendance.Description,
-			Status:      attendance.Status,
-			Number:      attendance.Number,
-			CreatedAt:   attendance.CreatedAt.Format("2006-01-02 15:04:05"),
-		}
+		formattedAttendance := FormatAttendance(attendance)
 		formattedAttendances = append(formattedAttendances, formattedAttendance)
 	}
 
-	r.Attendances = formattedAttendances
-	r.Summary.Total = total
-	r.Summary.Hadir = hadir
-	r.Summary.TidakHadir = tidakHadir
-	r.Summary.Ragu = ragu
+	formattedSummary := Summary{}
+	formattedSummary.Total = total
+	formattedSummary.Hadir = hadir
+	formattedSummary.TidakHadir = tidakHadir
+	formattedSummary.Ragu = ragu
+
+	return AttendancesResponse{
+		Attendances: formattedAttendances,
+		Summary:     formattedSummary,
+	}
 }
 
-func (r *AttendanceResponse) FormatAttendance(attendance *model.Attendance) {
-	r.Name = attendance.Name
-	r.Description = attendance.Description
-	r.Status = attendance.Status
-	r.Number = attendance.Number
-	r.CreatedAt = attendance.CreatedAt.Format("2006-01-02 15:04:05")
+func FormatAttendance(attendance *model.Attendance) AttendanceResponse {
+	formattedAttendance := AttendanceResponse{}
+	formattedAttendance.Name = attendance.Name
+	formattedAttendance.Description = attendance.Description
+	formattedAttendance.Status = attendance.Status
+	formattedAttendance.Number = attendance.Number
+	formattedAttendance.CreatedAt = attendance.CreatedAt.Format("2006-01-02 15:04:05")
+
+	return formattedAttendance
 }
