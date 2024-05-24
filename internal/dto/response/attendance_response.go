@@ -31,17 +31,16 @@ func FormatAttendanceResponse(attendances []*model.Attendance) AttendancesRespon
 	formattedAttendances := []AttendanceResponse{}
 
 	for _, attendance := range attendances {
+		total += 1
+
 		if attendance.Status == constant.StatusHadir {
 			if attendance.Number != nil {
 				hadir += *attendance.Number
-				total += *attendance.Number
 			}
 		} else if attendance.Status == constant.StatusTidakHadir {
 			tidakHadir += 1
-			total += 1
 		} else {
 			ragu += 1
-			total += 1
 		}
 
 		formattedAttendance := FormatAttendance(attendance)
